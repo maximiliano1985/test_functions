@@ -18,7 +18,10 @@ class Tester
     @cfg.merge! args
     # based on the number of functions chosen to the test, load the function library
     @fcns = load_fcns(@cfg[:n_fcns]) # it is an array with the name of all functions that will be tested
-    File.open("../results.txt", "w"){ |file| file.puts "algorithm class n_iterations time residual" }
+    @file_name = "../results.txt"
+    File.open(@file_name, "w"){ |file| file.puts "Number of tested functions #{@cfg[:n_fcns]}\n
+    Class of test functions: nls = nonlinear last squares, umi = unconstrained minimisation, sne = systems of nonlinear equations\n\n
+    algorithm class n_iterations time exact_sol approx_sol residual" }
   end
   
   def test(opt)
@@ -28,6 +31,8 @@ class Tester
     
     @fcns.each{ |k,f| opt.loop{|x| f.call(x)} }
     
+    
+    
     #puts self.method(fcns[0].to_sym).call([3,4])
     #Functions::metaclass.superclass.method(:rosenbrock).call
     #fcns.each{ |f| opt.loop{|p| f.to_sym.call(p)}}
@@ -35,7 +40,10 @@ class Tester
     #Functions::nonlinear_last_squares( , &block)
   end
   
-  def log
+  def log(hash={})
+    File.open(@file_name, "a") |file|
+      file.puts "#{hash[:name]} #{hash[:class]} #{hash[:n_it]}  #{hash[:time]}  #{hash[:exac]}  #{hash[:approx]}  #{hash[:res]}"
+    end
   end
 end 
 

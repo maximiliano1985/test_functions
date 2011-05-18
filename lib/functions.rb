@@ -36,13 +36,13 @@ module Functions
     arg[:f_now].each_index{ |i| res += (arg[:f_now][i] - arg[:f_min][i]).abs }
     return res
   end
-
+  
+=begin
   def increment(arg={})
     inc = 0.0
     arg[:x_now].each_index{ |i| inc += (arg[:x_now][i] - [:x_before][i]).abs }
     return inc
-  end
-=begin  
+  end 
   def rosenbrock_m(x)
     raise "Dimension error" if x.size < 2
     f_1 = 10*(x[1] - x[0]**2)
