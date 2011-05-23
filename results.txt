@@ -1,0 +1,4 @@
+Number of tested functions 1
+Class of test functions: nls = nonlinear last squares, umi = unconstrained minimisation, sne = systems of nonlinear equations
+
+algorithm class n_iterations time exact_sol exact_f approx_sol approx_f residual

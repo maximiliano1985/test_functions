@@ -19,18 +19,29 @@ class Tester
     # based on the number of functions chosen to the test, load the function library
     @fcns = load_fcns(@cfg[:n_fcns]) # it is an array with the name of all functions that will be tested
     @file_name = "../results.txt"
-    File.open(@file_name, "w"){ |file| file.puts "Number of tested functions #{@cfg[:n_fcns]}\n
-    Class of test functions: nls = nonlinear last squares, umi = unconstrained minimisation, sne = systems of nonlinear equations\n\n
-    algorithm class n_iterations time exact_sol approx_sol residual" }
+    File.open(@file_name, "w"){ |file| file.puts "Number of tested functions #{@cfg[:n_fcns]}
+Class of test functions: nls = nonlinear last squares, umi = unconstrained minimisation, sne = systems of nonlinear equations\n
+algorithm class n_iterations time exact_sol exact_f approx_sol approx_f residual" }
   end
   
   def test(opt)
+    raise ArgumentError, "Block needed" unless block_given?
     @fcns.count == 1 ? auxstr = "it is" : "they are"
     puts "#{@fcns.count} functions will be tested, "+auxstr+":\n #{@fcns.keys.inspect}"
     
+    ######### fare un metodo che imposti il primo tentativo
+    ary = {}
+    @fcns.each do |k,f|
+      start_t = Time.now
+      opt.loop(ary){|x| f[:f].call(x)} # runs the optimisation loop
+      f[:time] = Time.now - start_t    # evaluates the time required to converge
+      res = yield(ary)                 # extracts the results
+      f[:x_cal] = res[0]                  # extracts the abscissae of the solution
+      f[:f_cal] = res[1]               # extracts the ordinate of the solution
+      f[:n_it]  = res[2]               # extracts the number of iterations made
+    end # fcns.each
     
-    @fcns.each{ |k,f| opt.loop{|x| f.call(x)} }
-    
+    residual(@fcns)
     
     
     #puts self.method(fcns[0].to_sym).call([3,4])
@@ -40,9 +51,9 @@ class Tester
     #Functions::nonlinear_last_squares( , &block)
   end
   
-  def log(hash={})
-    File.open(@file_name, "a") |file|
-      file.puts "#{hash[:name]} #{hash[:class]} #{hash[:n_it]}  #{hash[:time]}  #{hash[:exac]}  #{hash[:approx]}  #{hash[:res]}"
+  def log(n = 1, hash={})
+    File.open(@file_name, "a") do |file|
+      file.puts "#{n} #{hash[:f]} #{hash[:class]} #{hash[:n_it]}  #{hash[:time]}  #{hash[:x_abs]}  #{hash[:f_abs]}  #{hash[:x_cal]}  #{hash[:f_cal]}  #{hash[:residual]}"
     end
   end
 end 
@@ -60,5 +71,8 @@ if __FILE__ == $0
   #opt.loop{|p| f.call(p)}
   #p opt.iteration
   tester = Tester.new(:n_fcns => 1) 
-  tester.test( opt )
+  tester.test( opt ) do |a| # the block is used to extract the solution from the array of iterations
+    out_hash = a[(a.count-1).to_s.to_sym].first
+    [out_hash[:chromosome], out_hash[:fitness], a.count]
+  end
 end
