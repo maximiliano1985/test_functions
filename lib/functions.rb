@@ -10,6 +10,8 @@ One can evaluate the performances of the agorithm by counting the number of iter
 For each test function is defined a procedure, its name, its type and its starting points. The functions are defined in alphabetical order.
 =end
 
+INF = 1.0/0.0
+
 module Functions
   
   def load_fcns( n_fcns = "all" ) # list of all the test functions
@@ -68,7 +70,7 @@ module Functions
                        :f     => @@bard,
                        :class => "nls",
                        :start => [1,1,1],
-                       :x_abs => [0.8406,-1e6, -1e6],
+                       :x_abs => [0.8406,-INF, -INF],
                        :f_abs => 17.4286 ############## ambiguities here
       },
       :gaussian => {
@@ -80,14 +82,38 @@ module Functions
       }
     }
     i = 0
-    n_fcns = @functions.count if n_fcns == "all"
+    n_fcns = @functions.count if n_fcns == "all" || n_fcns >= @functions.count
     fcns = {}
     @functions.each{|k,v| fcns[k]=v if i < n_fcns; i+=1}
     return fcns
   end
   
   
-  def residual(fcns={}) ; fcns[:residual] = fcns[:f_cal] - fcns[:f_abs] ; return fcns ; end
+  def residual(fcns={})
+    fcns[:residual] = fcns[:f_cal] - fcns[:f_abs]
+    return fcns
+  end
+  
+  def res_err_perc(fcns={})
+    fcns[:res_err_perc] = (100*(fcns[:f_cal] - fcns[:f_abs])/fcns[:f_abs]).abs
+    return fcns
+  end
+  
+  def increment(fcns={})
+    fcns[:increment] = fcns[:x_cal]
+    fcns[:x_abs].each_index do |i|
+      fcns[:increment][i] = fcns[:x_cal][i] - fcns[:x_abs][i]
+    end
+    return fcns
+  end
+  
+  def inc_err_perc(fcns={})
+    fcns[:inc_err_perc] = fcns[:x_cal]
+    fcns[:x_abs].each_index do |i|
+      fcns[:inc_err_perc][i] = (100*(fcns[:x_cal][i] - fcns[:x_abs][i])/fcns[:x_abs][i]).abs
+    end
+    return fcns
+  end
   
   private
   

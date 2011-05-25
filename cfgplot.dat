@@ -1,0 +1,17 @@
+reset
+set border 3 front linetype -1 linewidth 1.000
+set boxwidth 0.75 absolute
+set style fill   solid 1.00 border -1
+set grid noxtics nomxtics ytics nomytics  \
+   nox2tics nomx2tics noy2tics nomy2tics nocbtics nomcbtics
+set style histogram columnstacked title  offset character 0, 0, 0
+set datafile missing '-'
+set style data histograms
+set xtics border in scale 1,0.5 nomirror rotate by -45  offset character 0, 0, 0
+set ytics border in scale 0,0 mirror norotate  offset character 0, 0, 0 autofreq
+set title "Optimiser performance plot"
+set xlabel "Algorithm"
+set yrange [0 : 10]
+set ylabel "Performance: residual + elapsed time"
+plot 'dataplot.dat' using 1 ti col , '' using 2 ti col , '' using 3 ti col , '' using 4 ti col , '' using 5 ti col , '' using 6 ti col , '' using 7 ti col , '' using 8 ti col , '' using 9 ti col
+exit
