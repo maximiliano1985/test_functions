@@ -19,8 +19,8 @@ tester.test( extract_out ) do |domain|
   opt = GA::Optimizer.new( :tol => 1E-3,
   :p_mutation  => 0.2,
   :p_crossover => 0.8,
-  :npop        => 400,
-  :ncr         => 100,
+  :npop        => 40,
+  :ncr         => 10,
   :pconv       => false,
   :i_o         => domain
   )

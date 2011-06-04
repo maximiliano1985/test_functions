@@ -45,8 +45,7 @@ module Functions
                        :x_abs => [1e6, 2e-6],
                        :f_abs => 0.0
       },
-      :beale => {
-                       :f     => @@beale,
+      :beale => {      :f     => @@beale,
                        :class => "umi",
                        :start => [1,1],
                        :x_abs => [3, 0.5],
@@ -66,19 +65,38 @@ module Functions
                        :x_abs => [ 1,0,0],
                        :f_abs => 0.0
       },
-      :bard => {
-                       :f     => @@bard,
+      :bard => {       :f     => @@bard,
                        :class => "nls",
                        :start => [1,1,1],
                        :x_abs => [0.8406,-INF, -INF],
                        :f_abs => 17.4286 ############## ambiguities here
       },
-      :gaussian => {
-                       :f     => @@gaussian,
+      :gaussian => {   :f     => @@gaussian,
                        :class => "umi",
                        :start => [0.4, 1, 0],
                        :x_abs => [0,0,0],############## ambiguities here
                        :f_abs => 1.12793e-8
+      },
+      ####### rivediti le classi delle funzioni
+      :meyer => {      :f     => @@meyer,
+                       :class => "umi",
+                       :start => [0.02, 4000, 250],
+                       :x_abs => [0,0,0],############## ambiguities here
+                       :f_abs => 87.9458
+      },
+      :gulf_reseach_development => {
+                       :f     => @@gulf_reseach_development,
+                       :class => "umi",
+                       :start => [5, 2.5, 0.15],
+                       :x_abs => [50, 25, 1.5],
+                       :f_abs => 0.0
+      },
+      :powell_singular => {
+                       :f     => @@powell_singular,
+                       :class => "umi",
+                       :start => [3, -1, 0, 1],
+                       :x_abs => [0.0, 0.0, 0.0, 0.0],
+                       :f_abs => 0.0
       }
     }
     i = 0
@@ -183,6 +201,37 @@ module Functions
     end
     fcn
   end
+  
+  @@meyer = lambda do |x|
+    raise "Dimension error" unless x.size == 3
+    y = [ 34780, 28610, 23650, 19630, 16370, 13720, 11540, 9744, 8261, 7030, 6005, 5147, 4427, 3820, 3307, 2872 ]
+    fcn = 0.0
+    16.times do |j|
+      i = j + 1
+      t = 45 + 5*i
+      fcn += x[0]*Math::exp( x[1]/(t+x[2]) ) - y[j]
+    end
+    fcn
+  end
+  
+  @@gulf_reseach_development = lambda do |x|
+    raise "Dimension error" unless x.size == 3
+    fcn = 0.0
+    97.times do |j|
+      i = j + 1 + 3 # i.e. n <= m <= 100 ( with n = 3 )
+      t = i / 100
+      y = 25 + ( -50*Math.log( t ) )**(2/3)
+      fcn += Math::exp( -( (y*100*i*x[1]).abs )**x[2]/x[0] )
+    end
+    fcn
+  end
+  
+  @@powell_singular = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    x[0]+10*x[1] + 5**0.5*(x[2]-x[3]) + (x[1]-2*x[2])**2 + 10**0.5*(x[0]-x[3])**2
+  end
+  
+  
 end # module Functions
 
 
