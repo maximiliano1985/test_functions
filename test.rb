@@ -16,11 +16,11 @@ end
 # block used to adapt the function domain dinamically
 tester.test( extract_out ) do |domain|
   raise "Hash needed" unless domain.class == Hash
-  opt = GA::Optimizer.new( :tol => 1E-3,
+  opt = GA::Optimizer.new( :tol => 1e-1,
   :p_mutation  => 0.2,
   :p_crossover => 0.8,
-  :npop        => 40,
-  :ncr         => 10,
+  :npop        => 100,
+  :ncr         => 200,
   :pconv       => false,
   :i_o         => domain
   )

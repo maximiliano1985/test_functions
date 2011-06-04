@@ -494,7 +494,7 @@ module Functions
     13.times do |j|
       i = j + 1
       t = 0.1*i
-      y = Math.exp(-t) - 5*math.exp(-10*t) + 3*Math.exp(-4*t)
+      y = Math.exp(-t) - 5*Math.exp(-10*t) + 3*Math.exp(-4*t)
       fcn += x[2]*Math.exp(-t*x[0]) - x[3]*Math.exp(-t*x[1]) + x[5]*Math.exp(-t*x[4]) - y
     end
     fcn
@@ -507,14 +507,11 @@ module Functions
       i = k + 1
       t = i/29 
       a = 0.0 ; b = 0.0
-      (x.count).times do |j|
-        b += ( x[j]*t**(j-1) )**2
-        next if j == 0
-        a += ( j - 1 )*x[j]*t**( j - 2 )
-      end
-      fcn += a - b - 1
+      (x.count-2).times{ |j| a += ((j-1)*t**j*x[j+1]) }
+      (x.count-1).times{ |j| b += t**j*x[j+1]}
+      fcn += ( a - b**2 - 1 )**2
     end
-    fcn + x[0] + x[1] - x[0]**2 - 1
+    fcn + x[0]**2
   end
   
   ######### from reference [2]
@@ -524,20 +521,20 @@ module Functions
     x[0]**2 + 2.0*x[1]**2 - 0.3*Math.cos(3*PI*x[0]) - 0.4*Math.cos(4*PI*x[1]) + 0.7
   end
   
-  @booth = lambda do |x|
+  @@booth = lambda do |x|
     raise "Dimension error" unless x.size == 2
     ( x[0] + 2*x[1] -7 )**2 + ( 2*x[0] + x[1] - 5 )**2
   end
   
-   @ackley = lambda do |x|
+  @@ackley = lambda do |x|
     raise "Dimension error" unless x.size == 4
-    a = 0.0 ,  b = 0.0
+    a = 0.0 ;  b = 0.0
     n = x.count
     x.each{ |v| a += v**2 ; b += Math.cos(2*PI*v) }
     - 20*Math.exp(0.2)*(a/n)**0.5 - Math.exp(b/n) +20 + Math.exp(1)
   end
   
-  @box_betts = lambda do |x|
+  @@box_betts = lambda do |x|
     raise "Dimension error" unless x.size == 3
     fcn = 0.0
     x.count.times do |i|
@@ -546,14 +543,14 @@ module Functions
     fcn
   end
   
-  @branin = lambda do |x|
+  @@branin = lambda do |x|
     raise "Dimension error" unless x.size == 2
-    (1.0 - 2.0*x[1] + sin(4.0*PI*x[1])/20.0 - x[0])**2 + (x[1] - Math.sin(2.0*PI*X[0])/2.0)**2
+    (1.0 - 2.0*x[1] + Math.sin(4.0*PI*x[1])/20.0 - x[0])**2 + (x[1] - Math.sin(2.0*PI*x[0])/2.0)**2
   end
   
   @@chichinadze = lambda do |x|
     raise "Dimension error" unless x.size == 2
-    x[0]**2 - 12*x[0] + 11 + 10*cos(PI/2*x[0]) + 8*sin(5*PI*x[0]) - 1/(5**0.5)*Math.exp(-0.5*(x[1] - 0.5)**2)
+    x[0]**2 - 12*x[0] + 11 + 10*Math.cos(PI/2*x[0]) + 8*Math.sin(5*PI*x[0]) - 1/(5**0.5)*Math.exp(-0.5*(x[1] - 0.5)**2)
   end
   
   @@coville = lambda do |x|
@@ -563,7 +560,7 @@ module Functions
   
   @@easom = lambda do |x|
     raise "Dimension error" unless x.size == 2
-    - cos(x[0])*cos([1])*Math.exp( - (x[0] - PI)**2 - (x[1] - PI)**2 )
+    - Math.cos(x[0])*Math.cos(x[1])*Math.exp( - (x[0] - PI)**2 - (x[1] - PI)**2 )
   end
   
   @@goldstein_price = lambda do |x|
@@ -589,10 +586,15 @@ module Functions
   @@holzman = lambda do |x|
     raise "Dimension error" unless x.size == 3
     fcn = 0.0
-    99.times do |i|
-      u = 25 + ( -50*Math.log(0.01*(i+1)) )**(2/3)
-      fcn += -0.1*(i + 1) + Math.exp(1/x[0]*(u + x[1])**x[2])
-    end
+    #99.times do |i|
+    #  u = 25 + ( -50*Math.log( 0.01*( i + 1 ) ) )**(2/3)
+    #  a = [0, x[2]].max
+    #  b = [0.1, x[0]].max
+    #  puts "-"*40
+    #  puts  (u - x[1])
+    #  fcn += -0.1*(i + 1) + Math.exp( 1/b*(u - x[1])**a )
+    #end
+    x.count.times{ |i| fcn += i*x[i]**4 }
     fcn
   end
   
@@ -631,7 +633,14 @@ module Functions
     raise "Dimension error" unless x.count == 10
     fcn_s = 0.0 ; fcn_p = 0.0
     x.count.times do |i|
-      fcn_s += (Math.log(x[i]-2.0))**2 + (Math.log(10 - x[i]))**2
+      x_i  = x[i]
+      case
+      when x_i <= 2.0001
+        x_i = 2.0001
+      when x_i >= 9.9999
+        x_i = 9.9999
+      end
+      fcn_s += (Math.log(x_i-2.0))**2 + (Math.log(10 - x_i))**2
       fcn_p *= x[i]
     end
     fcn_s - fcn_p**0.2
@@ -640,7 +649,7 @@ module Functions
   @@plateau = lambda do |x|
     raise "Dimension error" unless x.count == 5
     fcn = 0.0
-    x.count.times{|i| fnc += x[i]}
+    x.count.times{|i| fcn += x[i]}
     fcn + 30
   end
   
@@ -654,14 +663,14 @@ module Functions
     fcn
   end
   
-  @@rastrigin do |x|
+  @@rastrigin =lambda do |x|
     raise "Dimension error" unless x.count == 6
     fcn = 0.0
     x.count.times{ |i| fcn += x[i]**2 - 10*Math.cos(2*PI*x[i]) + 10 }
     fcn
   end
   
-  @@step do |x|
+  @@step =lambda do |x|
     raise "Dimension error" unless x.count == 6
     fcn = 0.0
     x.count.times{ |i| fcn += (x[i] + 0.5)**2 }
@@ -670,7 +679,7 @@ module Functions
 
   @@trefethen_4 = lambda do |x|
     raise "Dimension error" unless x.count == 2
-    Math.exp(Math.sin(50.0*x[0])) + Math.sin(60.0*Math.exp(x[1])) + Math.sin(70.0*sin(x[0])) + Math.sin(Math.sin(80.0*x[1])) - Math.sin(10.0*(x[0]+x[1])) + 1.0/4.0*(x[0]**2+x[1]**2)
+    Math.exp(Math.sin(50.0*x[0])) + Math.sin(60.0*Math.exp(x[1])) + Math.sin(70.0*Math.sin(x[0])) + Math.sin(Math.sin(80.0*x[1])) - Math.sin(10.0*(x[0]+x[1])) + 1.0/4.0*(x[0]**2+x[1]**2)
   end
   
   @@zettl = lambda do |x|
