@@ -97,7 +97,49 @@ module Functions
                        :start => [3, -1, 0, 1],
                        :x_abs => [0.0, 0.0, 0.0, 0.0],
                        :f_abs => 0.0
-      }
+      },
+      :wood => {       :f     => @@wood,
+                       :class => "umi",
+                       :start => [-3, -1, -3, -1],
+                       :x_abs => [1, 1, 1, 1],
+                       :f_abs => 0.0
+      },
+      :kowalik_and_osborne => {
+                       :f     => @@kowalik_and_osborne,
+                       :class => "umi",
+                       :start => [0.25, 0.39, 0.415, 0.39],
+                       :x_abs => [+INF, -14.07,-INF, -INF],
+                       :f_abs => 1.02734e-3,
+                       :x_loc => [0, 0, 0, 0],
+                       :f_loc => 3.07505e-4
+      },
+      :brown_and_dennis => {
+                       :f     => @@brown_and_dennis,
+                       :class => "umi",
+                       :start => [25, 5, -5, -1],
+                       :x_abs => [0, 0, 0, 0],
+                       :f_abs => 85822.2
+      },
+      :osborne_1 => {  :f     => @@osborne_1,
+                       :class => "umi",
+                       :start => [0.5, 1.5, -1, 0.01, 0.02],
+                       :x_abs => [0, 0, 0, 0],
+                       :f_abs => 5.46489e-5
+      },
+      :osborne_2 => {  :f     => @@osborne_2,
+                       :class => "umi",
+                       :start => [1.3, 0.65, 0.65, 0.7, 0.6, 3, 5, 7, 2, 4.5, 5.5],
+                       :x_abs => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                       :f_abs => 4.01377e-2
+      },
+      :biggs_exp6 => { :f     => @@biggs_exp6,
+                       :class => "umi",
+                       :start => [1, 2, 1, 1, 1, 1],
+                       :x_abs => [1, 10, 1, 5, 4, 3],
+                       :f_abs => 0.0,
+                       :x_loc => [0, 0, 0, 0, 0, 0],
+                       :f_loc => 5.65565e-3
+      },
     }
     i = 0
     n_fcns = @functions.count if n_fcns == "all" || n_fcns >= @functions.count
@@ -229,6 +271,85 @@ module Functions
   @@powell_singular = lambda do |x|
     raise "Dimension error" unless x.size == 4
     x[0]+10*x[1] + 5**0.5*(x[2]-x[3]) + (x[1]-2*x[2])**2 + 10**0.5*(x[0]-x[3])**2
+  end
+  
+  @@wood = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    f_1 = 10*(x[1]-x[0]**2)
+    f_2 = 1-x[0]
+    f_3 = 90**0.5*( x[3] - x[2]**2 )
+    f_4 = 1- x[2]
+    f_5 = 10**0.5*( x[1] + x[3] -2 )
+    f_6 = 10**(-0.5)*( x[1] - x[3] )
+    f_1 + f_2 + f_3 + f_4 + f_5 + f_6
+  end
+  
+  @@kowalik_and_osborne = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    u = [ 4.0, 2.0, 1.0, 0.5, 0.25, 0.167, 0.125, 0.1, 0.0833, 0.0714, 0.625]
+    y = [ 0.1957, 0.1947, 0.1735, 0.1600, 0.0844, 0.0627, 0.0456, 0.0342, 0.0323, 0.0235, 0.0246]
+    fcn = 0.0
+    11.times do |j|
+      fcn += y[j] - x[0]*( u[j]**2 + u[j]*x[1] )/( u[j]**2 + u[j]*x[2] + x[3] )
+    end
+    fcn
+  end
+  
+  @@brown_and_dennis = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    fcn = 0.0
+    20.times do |j|
+      i = j + 1
+      t = i/5
+      fcn += ( x[0] + t*x[1] -Math.exp(t) )**2 + ( x[2] + x[3]*Math.sin(t) -Math.cos(t) )**2
+    end
+    fcn
+  end
+  
+  @@osborne_1 = lambda do |x|
+    raise "Dimension error" unless x.size == 5
+    y = [ 0.844, 0.908, 0.932, 0.936, 0.925, 0.908, 0.881, 0.850, 0.818, 0.784,
+          0.751, 0.718, 0.685, 0.658, 0.628, 0.603, 0.580, 0.558, 0.538, 0.522,
+          0.506, 0.490, 0.478, 0.467, 0.457, 0.448, 0.438, 0.431, 0.424, 0.420,
+          0.414, 0.411, 0.406 ]
+    fcn = 0.0
+    33.times do |j|
+      i = j + 1
+      t = 10*(i-1)
+      fcn += y[j] - ( x[0] + x[1]*Math.exp(-t*x[3]) + x[2]*Math.exp(-t*x[4]) )
+    end
+    fcn
+  end
+  
+  @@osborne_2 = lambda do |x|
+    raise "Dimension error" unless x.size == 11
+    y = [ 1.366, 1.191, 1.112, 1.013, 0.991, 0.885, 0.831, 0.847, 0.786, 0.725,
+          0.746, 0.679, 0.608, 0.655, 0.616, 0.606, 0.602, 0.626, 0.651, 0.724,
+          0.649, 0.649, 0.694, 0.644, 0.624, 0.661, 0.612, 0.558, 0.533, 0.495,
+          0.500, 0.423, 0.395, 0.375, 0.372, 0.391, 0.396, 0.405, 0.428, 0.429,
+          0.523, 0.562, 0.607, 0.653, 0.672, 0.708, 0.633, 0.668, 0.645, 0.632,
+          0.591, 0.559, 0.597, 0.625, 0.739, 0.710, 0.729, 0.720, 0.636, 0.581,
+          0.428, 0.292, 0.162, 0.098, 0.054 ]
+    fcn = 0.0
+    65.times do |j|
+      i = j + 1
+      t = (i-1)/10
+      fcn += y[j] - ( x[0]*Math.exp(-t*x[4]) +x[1]*Math.exp(-x[5]*(t-x[8])**2) +
+             x[2]*Math.exp(-x[6]*(t-x[9])**2) + x[3]*Math.exp(-x[7]*(t-x[10])**2) )
+    end
+    fcn
+  end
+  
+  @@biggs_exp6 = lambda do |x|
+    raise "Dimension error" unless x.size == 6
+    fcn = 0.0
+    13.times do |j|
+      i = j + 1
+      t = 0.1*i
+      y = Math.exp(-t) - 5*math.exp(-10*t) + 3*Math.exp(-4*t)
+      fcn += x[2]*Math.exp(-t*x[0]) - x[3]*Math.exp(-t*x[1]) + x[5]*Math.exp(-t*x[4]) - y
+    end
+    fcn
   end
   
   
