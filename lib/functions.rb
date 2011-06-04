@@ -132,33 +132,33 @@ module Functions
       },
       :bard => {       :f     => @@bard,
                        :class => "nls",
-                       :start => [1.0,1.0,1.0],
+                       :start => [1.0]*3,
                        :x_abs => [0.08, 1.13, 2.34],
                        :f_abs => 4.107e-3
       },
       :box_betts => {  :f     => @@box_betts,
                        :class => "nls",
                        :start => [-3.0,1.0,3.0],
-                       :x_abs => [1.0,10.0,1.0],
+                       :x_abs => [1.0, 10.0 ,1.0],
                        :f_abs => 0.0
       },
       :powell_singular => {
                        :f     => @@powell_singular,
                        :class => "umi",
                        :start => [3.0, -1.0, 0.0, 1.0],
-                       :x_abs => [0.0, 0.0, 0.0, 0.0],
+                       :x_abs => [0.0]*4,
                        :f_abs => 0.0
       },
       :wood => {       :f     => @@wood,
                        :class => "umi",
                        :start => [-3.0, -1.0, -3.0, -1.0],
-                       :x_abs => [1.0, 1.0, 1.0, 1.0],
+                       :x_abs => [1.0]*4,
                        :f_abs => 0.0
       },
       :ackley => {     :f     => @@ackley,
                        :class => "umi",
                        :start => [-30.0, -10.0, -30.0, -10.0],
-                       :x_abs => [0.0, 0.0, 0.0, 0.0],
+                       :x_abs => [0.0]*4,
                        :f_abs => 0.0
       },
       :kowalik_and_osborne => {
@@ -171,28 +171,40 @@ module Functions
       :coville => {    :f     => @@coville,
                        :class => "umi",
                        :start => [-10.0, 10.0, -10.0, -10.0],
-                       :x_abs => [1.0, 1.0, 1.0, 1.0],
+                       :x_abs => [1.0]*4,
                        :f_abs => 0.0
+      },
+      :plateau => {    :f     => @@plateau,
+                       :class => "umi",
+                       :start => [4.0, 3.0, -1.0, -2.0, -5.0],
+                       :x_abs => [0.0]*5,
+                       :f_abs => 30.0
       },
       :biggs_exp6 => { :f     => @@biggs_exp6,
                        :class => "umi",
                        :start => [1.0, 2.0, 1.0, 1.0, 1.0, 1.0],
                        :x_abs => [1.0, 10.0, 1.0, 5.0, 4.0, 3.0],
                        :f_abs => 0.0,
-                       :x_loc => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :x_loc => [0.0]*6,
                        :f_loc => 5.65565e-3
       },
       :watson => {     :f     => @@watson,
                        :class => "umi",
-                       :start => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :start => [0.0]*6,
                        :x_abs => [-0.0158, 1.012, -0.2329, 1.260, -0.513, 0.9928],
                        :f_abs => 2.28767e-3,
       },
       :levy => {       :f     => @@levy,
                        :class => "umi",
-                       :start => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :start => [0.0]*6,
                        :x_abs => [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -4.754402],
                        :f_abs => -11.504403,
+      },
+      :rastrigin => {  :f     => @@rastrigin,
+                       :class => "umi",
+                       :start => [5.0]*6,
+                       :x_abs => [0.0]*6,
+                       :f_abs => 0.0,
       },
       :griewank => {     :f     => @@griewank,
                        :class => "umi",
@@ -218,7 +230,12 @@ module Functions
                        :x_abs => [0.0]*15,
                        :f_abs => 0.0,
       },
-      
+      :powell => {     :f     => @@powell,
+                       :class => "umi",
+                       :start => [-4.5]*16,
+                       :x_abs => [3, -1, 0, 1, 3, -1, 0, 1, 3, -1, 0, 1, 3, -1, 0, 1],
+                       :f_abs => 0.0,
+      },
       
 =begin        
       :gaussian => {   :f     => @@gaussian,
@@ -606,6 +623,31 @@ module Functions
     fcn_s - fcn_p**0.2
   end
 
+  @@plateau = lambda do |x|
+    raise "Dimension error" unless x.count == 5
+    fcn = 0.0
+    x.count.times{|i| fnc += x[i]}
+    fcn + 30
+  end
+  
+  @@powell = lambda do |x|
+    raise "Dimension error" unless x.count == 16
+    fcn = 0.0
+    (x.count/4).times do |i|
+      j = i + 1
+      fcn += (x[4*j-4] + 10*x[4*j-3])**2 + 5*(x[4*j-2] - x[4*j-1])**2 + (x[4*j-3] - 2*x[4*j-2])**4 + 10*(x[4*j-4] - x[4*j-1])**4
+    end
+    fcn
+  end
+  
+  @@rastrigin do |x|
+    raise "Dimension error" unless x.count == 6
+    fcn = 0.0
+    x.count.times{ |i| fcn += x[i]**2 - 10*Math.cos(2*PI*x[i]) + 10 }
+    fcn
+  end
+  
+  
 end # module Functions
 
 
