@@ -108,6 +108,18 @@ module Functions
                        :x_abs => [4.0, 2.0],
                        :f_abs => -2.3458
       },
+      :trefethen_4 => {:f     => @@trefethen_4,
+                       :class => "nls",
+                       :start => [-6.0, 3.5],
+                       :x_abs => [-0.0244031, 0.2106124],
+                       :f_abs => -3.30686865
+      },
+      :zettl => {      :f     => @@zettl,
+                       :class => "nls",
+                       :start => [-6.0, 3.5],
+                       :x_abs => [-0.02990, 0.0],
+                       :f_abs => -0.003791
+      },
       :helical_valley => {
                        :f     => @@helical_valley,
                        :class => "sne-nls",
@@ -204,6 +216,12 @@ module Functions
                        :class => "umi",
                        :start => [5.0]*6,
                        :x_abs => [0.0]*6,
+                       :f_abs => 0.0,
+      },
+      :step=> {        :f     => @@step,
+                       :class => "umi",
+                       :start => [100.0]*6,
+                       :x_abs => [0.5]*6,
                        :f_abs => 0.0,
       },
       :griewank => {     :f     => @@griewank,
@@ -586,9 +604,7 @@ module Functions
   @@levy = lambda do |x|
     raise "Dimension error" unless x.size == 7
     fcn = 0.0
-    (x.count-1).times do |i|
-     fcn += ( x[i] - 1 )**2*( 1 + Math.sin(3*PI*x[i+1])**2 )
-    end
+    (x.count-1).times{ |i| fcn += ( x[i] - 1 )**2*( 1 + Math.sin(3*PI*x[i+1])**2 ) }
     Math.sin(3*PI*x[0])**2 + fcn + ( x[6] - 1 )*(1 + Math.sin(2*PI*x[6])**2 )
   end
   
@@ -605,9 +621,7 @@ module Functions
     fcn = 0.0
     x.count.times do |k|
       fcn_i = 0.0
-      x.count.times do |i|
-        fcn_i += ( (i+1)**(k+1) + beta )*( (x[i]/(i+1))**(k+1) - 1 )
-      end
+      x.count.times{ |i| fcn_i += ( (i+1)**(k+1) + beta )*( (x[i]/(i+1))**(k+1) - 1 ) }
       fcn += fcn_i**2
     end
     fcn  
@@ -647,6 +661,22 @@ module Functions
     fcn
   end
   
+  @@step do |x|
+    raise "Dimension error" unless x.count == 6
+    fcn = 0.0
+    x.count.times{ |i| fcn += (x[i] + 0.5)**2 }
+    fcn
+  end
+
+  @@trefethen_4 = lambda do |x|
+    raise "Dimension error" unless x.count == 2
+    Math.exp(Math.sin(50.0*x[0])) + Math.sin(60.0*Math.exp(x[1])) + Math.sin(70.0*sin(x[0])) + Math.sin(Math.sin(80.0*x[1])) - Math.sin(10.0*(x[0]+x[1])) + 1.0/4.0*(x[0]**2+x[1]**2)
+  end
+  
+  @@zettl = lambda do |x|
+    raise "Dimension error" unless x.count == 2
+    (x[0]**2 + x[1]**2 - 2*x[0])**2 + 0.25*x[0]
+  end
   
 end # module Functions
 
