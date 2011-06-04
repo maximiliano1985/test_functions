@@ -10,7 +10,8 @@ One can evaluate the performances of the agorithm by counting the number of iter
 For each test function is defined a procedure, its name, its type and its starting points. The functions are defined in alphabetical order.
 =end
 
-INF = 1.0/0.0
+INF = 1e6
+PI = Math::PI
 
 module Functions
   
@@ -51,6 +52,18 @@ module Functions
                        :x_abs => [3, 0.5],
                        :f_abs => 0.0
       },
+      :branin => {      :f     => @@branin,
+                       :class => "umi",
+                       :start => [10,10],
+                       :x_abs => [0.402357, 0.287408],
+                       :f_abs => 0.0
+      },
+      :easom => {      :f     => @@easom,
+                       :class => "umi",
+                       :start => [-60,70],
+                       :x_abs => [PI, PI],
+                       :f_abs => -1.0
+      },
       :jennrich_and_sampson => {
                        :f     => @@jennrich_and_sampson,
                        :class => "nls",
@@ -58,88 +71,188 @@ module Functions
                        :x_abs => [0.2578, 0.2578],
                        :f_abs => 124.362
       },
+      :bohachevsky => {:f     => @@bohachevsky,
+                       :class => "nls",
+                       :start => [10.0,-10.0],
+                       :x_abs => [0.0, 0.0],
+                       :f_abs => 0.0
+      },
+      :booth => {      :f     => @@booth,
+                       :class => "nls",
+                       :start => [10.0,-10.0],
+                       :x_abs => [1.0, 3.0],
+                       :f_abs => 0.0
+      },
+      :chichinadze => {:f     => @@chichinadze,
+                       :class => "nls",
+                       :start => [30.0,-10.0],
+                       :x_abs => [5.90133, 0.5],
+                       :f_abs => 43.3159
+      },
+      :goldstein_price => {
+                       :f     => @@goldstein_price,
+                       :class => "nls",
+                       :start => [2.0, -2.0],
+                       :x_abs => [0.0, -1.0],
+                       :f_abs => 3.0
+      },
+      :himmelblau  => {:f     => @@himmelblau,
+                       :class => "nls",
+                       :start => [-6.0, 6.0],
+                       :x_abs => [3.0, 2.0],
+                       :f_abs => 0.0
+      },
+      :hosaki => {     :f     => @@hosaki,
+                       :class => "nls",
+                       :start => [-6.0, 6.0],
+                       :x_abs => [4.0, 2.0],
+                       :f_abs => -2.3458
+      },
       :helical_valley => {
                        :f     => @@helical_valley,
                        :class => "sne-nls",
-                       :start => [-1,0,0],
-                       :x_abs => [ 1,0,0],
+                       :start => [-1.0,0.0,0.0],
+                       :x_abs => [ 1.0,0.0,0.0],
+                       :f_abs => 0.0
+      },
+      :holzman => {    :f     => @@holzman,
+                       :class => "sne-nls",
+                       :start => [40.0, 22.0, 3.0],
+                       :x_abs => [ 50.0, 25.0, 1.5],
+                       :f_abs => 0.0
+      },
+
+      ####### rivediti le classi delle funzioni
+      :gulf_reseach_development => {
+                       :f     => @@gulf_reseach_development,
+                       :class => "umi",
+                       :start => [5.0, 2.5, 0.15],
+                       :x_abs => [50.0, 25.0, 1.5],
                        :f_abs => 0.0
       },
       :bard => {       :f     => @@bard,
                        :class => "nls",
-                       :start => [1,1,1],
-                       :x_abs => [0.8406,-INF, -INF],
-                       :f_abs => 17.4286 ############## ambiguities here
+                       :start => [1.0,1.0,1.0],
+                       :x_abs => [0.08, 1.13, 2.34],
+                       :f_abs => 4.107e-3
       },
-      :gaussian => {   :f     => @@gaussian,
-                       :class => "umi",
-                       :start => [0.4, 1, 0],
-                       :x_abs => [0,0,0],############## ambiguities here
-                       :f_abs => 1.12793e-8
-      },
-      ####### rivediti le classi delle funzioni
-      :meyer => {      :f     => @@meyer,
-                       :class => "umi",
-                       :start => [0.02, 4000, 250],
-                       :x_abs => [0,0,0],############## ambiguities here
-                       :f_abs => 87.9458
-      },
-      :gulf_reseach_development => {
-                       :f     => @@gulf_reseach_development,
-                       :class => "umi",
-                       :start => [5, 2.5, 0.15],
-                       :x_abs => [50, 25, 1.5],
+      :box_betts => {  :f     => @@box_betts,
+                       :class => "nls",
+                       :start => [-3.0,1.0,3.0],
+                       :x_abs => [1.0,10.0,1.0],
                        :f_abs => 0.0
       },
       :powell_singular => {
                        :f     => @@powell_singular,
                        :class => "umi",
-                       :start => [3, -1, 0, 1],
+                       :start => [3.0, -1.0, 0.0, 1.0],
                        :x_abs => [0.0, 0.0, 0.0, 0.0],
                        :f_abs => 0.0
       },
       :wood => {       :f     => @@wood,
                        :class => "umi",
-                       :start => [-3, -1, -3, -1],
-                       :x_abs => [1, 1, 1, 1],
+                       :start => [-3.0, -1.0, -3.0, -1.0],
+                       :x_abs => [1.0, 1.0, 1.0, 1.0],
+                       :f_abs => 0.0
+      },
+      :ackley => {     :f     => @@ackley,
+                       :class => "umi",
+                       :start => [-30.0, -10.0, -30.0, -10.0],
+                       :x_abs => [0.0, 0.0, 0.0, 0.0],
                        :f_abs => 0.0
       },
       :kowalik_and_osborne => {
                        :f     => @@kowalik_and_osborne,
                        :class => "umi",
                        :start => [0.25, 0.39, 0.415, 0.39],
-                       :x_abs => [+INF, -14.07,-INF, -INF],
-                       :f_abs => 1.02734e-3,
-                       :x_loc => [0, 0, 0, 0],
-                       :f_loc => 3.07505e-4
+                       :x_abs => [0.192833, 0.190836, 0.123117, 0.135766],
+                       :f_abs => 3.0748610e-4
       },
-      :brown_and_dennis => {
+      :coville => {    :f     => @@coville,
+                       :class => "umi",
+                       :start => [-10.0, 10.0, -10.0, -10.0],
+                       :x_abs => [1.0, 1.0, 1.0, 1.0],
+                       :f_abs => 0.0
+      },
+      :biggs_exp6 => { :f     => @@biggs_exp6,
+                       :class => "umi",
+                       :start => [1.0, 2.0, 1.0, 1.0, 1.0, 1.0],
+                       :x_abs => [1.0, 10.0, 1.0, 5.0, 4.0, 3.0],
+                       :f_abs => 0.0,
+                       :x_loc => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :f_loc => 5.65565e-3
+      },
+      :watson => {     :f     => @@watson,
+                       :class => "umi",
+                       :start => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :x_abs => [-0.0158, 1.012, -0.2329, 1.260, -0.513, 0.9928],
+                       :f_abs => 2.28767e-3,
+      },
+      :levy => {       :f     => @@levy,
+                       :class => "umi",
+                       :start => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       :x_abs => [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -4.754402],
+                       :f_abs => -11.504403,
+      },
+      :griewank => {     :f     => @@griewank,
+                       :class => "umi",
+                       :start => [450.0]*10,
+                       :x_abs => [0.0]*10,
+                       :f_abs => 0.0,
+      },
+      :neumaier => {   :f     => @@neumaier,
+                       :class => "umi",
+                       :start => [5.0]*10,
+                       :x_abs => [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                       :f_abs => 0.0,
+      },
+      :paviani => {   :f     => @@paviani,
+                       :class => "umi",
+                       :start => [5.0]*10,
+                       :x_abs => [9.340266]*10,
+                       :f_abs => -45.7784,
+      },
+      :maxmod => {     :f     => @@maxmod,
+                       :class => "umi",
+                       :start => [450.0]*15,
+                       :x_abs => [0.0]*15,
+                       :f_abs => 0.0,
+      },
+      
+      
+=begin        
+      :gaussian => {   :f     => @@gaussian,
+                       :class => "umi",
+                       :start => [0.4, 1, 0],
+                       :x_abs => [0,0,0],############## ambiguities here
+                       :f_abs => 1.12793e-8
+      },   
+      :meyer => {      :f     => @@meyer,
+                       :class => "umi",
+                       :start => [0.02, 4000, 250],
+                       :x_abs => [0,0,0],############## ambiguities here
+                       :f_abs => 87.9458
+      },
+     :brown_and_dennis => {
                        :f     => @@brown_and_dennis,
                        :class => "umi",
                        :start => [25, 5, -5, -1],
-                       :x_abs => [0, 0, 0, 0],
+                       :x_abs => [0, 0, 0, 0], ############## ambiguities here
                        :f_abs => 85822.2
       },
       :osborne_1 => {  :f     => @@osborne_1,
                        :class => "umi",
                        :start => [0.5, 1.5, -1, 0.01, 0.02],
-                       :x_abs => [0, 0, 0, 0],
+                       :x_abs => [0, 0, 0, 0], ############## ambiguities here
                        :f_abs => 5.46489e-5
       },
       :osborne_2 => {  :f     => @@osborne_2,
                        :class => "umi",
                        :start => [1.3, 0.65, 0.65, 0.7, 0.6, 3, 5, 7, 2, 4.5, 5.5],
-                       :x_abs => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                       :x_abs => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ############## ambiguities here
                        :f_abs => 4.01377e-2
-      },
-      :biggs_exp6 => { :f     => @@biggs_exp6,
-                       :class => "umi",
-                       :start => [1, 2, 1, 1, 1, 1],
-                       :x_abs => [1, 10, 1, 5, 4, 3],
-                       :f_abs => 0.0,
-                       :x_loc => [0, 0, 0, 0, 0, 0],
-                       :f_loc => 5.65565e-3
-      },
+      }, 
+=end      
     }
     i = 0
     n_fcns = @functions.count if n_fcns == "all" || n_fcns >= @functions.count
@@ -176,7 +289,7 @@ module Functions
   end
   
   private
-  
+  ######### from reference [1]
   @@rosenbrock = lambda do |x|
     raise "Dimension error" unless x.size == 2
     (10*(x[1] - x[0]**2))**2 + (1 - x[0])**2
@@ -352,7 +465,147 @@ module Functions
     fcn
   end
   
+  @@watson = lambda do |x|
+    raise "Dimension error" unless x.size == 6 # "n" can be: 6, 9, 12. Here is set to 6 
+    fcn = 0.0
+    29.times do |k|
+      i = k + 1
+      t = i/29 
+      a = 0.0 ; b = 0.0
+      (x.count).times do |j|
+        b += ( x[j]*t**(j-1) )**2
+        next if j == 0
+        a += ( j - 1 )*x[j]*t**( j - 2 )
+      end
+      fcn += a - b - 1
+    end
+    fcn + x[0] + x[1] - x[0]**2 - 1
+  end
   
+  ######### from reference [2]
+  
+  @@bohachevsky = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    x[0]**2 + 2.0*x[1]**2 - 0.3*Math.cos(3*PI*x[0]) - 0.4*Math.cos(4*PI*x[1]) + 0.7
+  end
+  
+  @booth = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    ( x[0] + 2*x[1] -7 )**2 + ( 2*x[0] + x[1] - 5 )**2
+  end
+  
+   @ackley = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    a = 0.0 ,  b = 0.0
+    n = x.count
+    x.each{ |v| a += v**2 ; b += Math.cos(2*PI*v) }
+    - 20*Math.exp(0.2)*(a/n)**0.5 - Math.exp(b/n) +20 + Math.exp(1)
+  end
+  
+  @box_betts = lambda do |x|
+    raise "Dimension error" unless x.size == 3
+    fcn = 0.0
+    x.count.times do |i|
+      fcn += (  Math.exp(-0.1*x[0]*(i+1)) -Math.exp(-0.1*x[1]*(i+1)) - ( Math.exp(-0.1*(i+1)) - Math.exp(-(i+1)) )*x[2]  )**2
+    end
+    fcn
+  end
+  
+  @branin = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    (1.0 - 2.0*x[1] + sin(4.0*PI*x[1])/20.0 - x[0])**2 + (x[1] - Math.sin(2.0*PI*X[0])/2.0)**2
+  end
+  
+  @@chichinadze = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    x[0]**2 - 12*x[0] + 11 + 10*cos(PI/2*x[0]) + 8*sin(5*PI*x[0]) - 1/(5**0.5)*Math.exp(-0.5*(x[1] - 0.5)**2)
+  end
+  
+  @@coville = lambda do |x|
+    raise "Dimension error" unless x.size == 4
+    100*(x[0] - x[1]**2)**2 + (1 - x[0])**2 + 90*(x[3] - x[2]**2)**2 + (1 - x[2])**2 + 10.1*((x[1] - 1)**2 + (x[3] - 1)**2) + 19.8*(x[1] - 1)*(x[3] - 1)
+  end
+  
+  @@easom = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    - cos(x[0])*cos([1])*Math.exp( - (x[0] - PI)**2 - (x[1] - PI)**2 )
+  end
+  
+  @@goldstein_price = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    ( 1 + (x[0] + x[1] + 1)**2*(19 - 14*x[0] + 3*x[0]**2 - 14*x[1] +6*x[0]*x[1] + 3*x[1]**2))*(18 - 32*x[0] + 12*x[0]**2 + 48*x[1] - 36*x[0]*x[1] + 27*x[1]**2)
+  end
+  
+  @@griewank = lambda do |x|
+    raise "Dimension error" unless x.size == 10
+    fcn_s = 0.0 ; fcn_p = 0.0
+    x.count.times do |i|
+      fcn_s += (x[i]-100)**2 
+      fcn_p *= Math.cos( (x[i]-100)/((i+1)**0.5) )
+    end
+    fcn_s/4000 - fcn_p + 1
+  end
+  
+  @@himmelblau = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    (x[0]**2 + x[1] - 11)**2 + (x[0] + x[1]**2 -7)**2 
+  end
+  
+  @@holzman = lambda do |x|
+    raise "Dimension error" unless x.size == 3
+    fcn = 0.0
+    99.times do |i|
+      u = 25 + ( -50*Math.log(0.01*(i+1)) )**(2/3)
+      fcn += -0.1*(i + 1) + Math.exp(1/x[0]*(u + x[1])**x[2])
+    end
+    fcn
+  end
+  
+  @@hosaki = lambda do |x|
+    raise "Dimension error" unless x.size == 2
+    ( 1 - 8*x[0] +7*x[0]**2 - 7/3*x[0]**3 + 1/4*x[0]**4)*x[1]**2*Math.exp(-x[1])
+  end
+  
+  @@levy = lambda do |x|
+    raise "Dimension error" unless x.size == 7
+    fcn = 0.0
+    (x.count-1).times do |i|
+     fcn += ( x[i] - 1 )**2*( 1 + Math.sin(3*PI*x[i+1])**2 )
+    end
+    Math.sin(3*PI*x[0])**2 + fcn + ( x[6] - 1 )*(1 + Math.sin(2*PI*x[6])**2 )
+  end
+  
+  @@maxmod = lambda do |x|
+    raise "Dimension error" unless x.size == 15
+    fcn = []
+    x.each{ |v| fcn << v.abs }
+    fcn.max
+  end
+  
+  @@neumaier = lambda do |x|
+    raise "Dimension error" unless x.count == 10
+    beta = 1e7
+    fcn = 0.0
+    x.count.times do |k|
+      fcn_i = 0.0
+      x.count.times do |i|
+        fcn_i += ( (i+1)**(k+1) + beta )*( (x[i]/(i+1))**(k+1) - 1 )
+      end
+      fcn += fcn_i**2
+    end
+    fcn  
+  end
+  
+  @@paviani = lambda do |x|
+    raise "Dimension error" unless x.count == 10
+    fcn_s = 0.0 ; fcn_p = 0.0
+    x.count.times do |i|
+      fcn_s += (Math.log(x[i]-2.0))**2 + (Math.log(10 - x[i]))**2
+      fcn_p *= x[i]
+    end
+    fcn_s - fcn_p**0.2
+  end
+
 end # module Functions
 
 
@@ -361,3 +614,4 @@ end # module Functions
 
 # References:
 # [1] Hillstrom, K.E. A simulation test approach to the evaluation of nonlinear optimization algorithms. ACM Trans. Math. Softw. 3, 4 (1977), 305-315
+# [2] http://extreme.adorio-research.org/download/mvf/html/node3.html update at 04/06/2011
