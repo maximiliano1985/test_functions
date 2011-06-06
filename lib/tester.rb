@@ -7,7 +7,8 @@
 
 require 'rubygems'
 require 'gnuplotr'
-require 'genetic_algorithm'
+require './lib/genetic_algorithm'
+require './lib/nmm'
 require './lib/functions'
 
 class Tester
@@ -27,7 +28,7 @@ class Tester
     @fcns = load_fcns(@cfg[:n_fcns]) # it is an array with the name of all functions that will be tested
     File.open(@cfg[:res_file], 'w'){ |file| file.puts "Number of tested functions #{@cfg[:n_fcns]}, starting domain: #{@cfg[:seach_dom]}
 Class of test functions:\nnls = nonlinear last squares\numi = unconstrained minimisation\nsne = systems of nonlinear equations\n
-#{@fcns.count} functions are tested:\nn name class iterations time_[s] x_exact x_calculated increment f_exact f_calculated residual start_search multiple_minima" }
+#{@fcns.count} functions are tested:\nn name dimension iterations time_[s] x_exact x_calculated increment f_exact f_calculated residual start_search multiple_minima" }
   end
   
   def test(extr_out)
@@ -35,8 +36,10 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     n = 1
     @fcns.count == 1 ? auxstr = "it is" : auxstr = "they are"
     puts "_"*60
+    puts "_"*60
     puts "#{@fcns.count} functions will be tested, "+auxstr+":"
     @fcns.each_key{ |k| puts k.to_s }
+    puts "_"*60
     puts "_"*60
     
     @fcns.each do |k,f|
@@ -46,12 +49,14 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
         start_dom[i.to_s.to_sym] = @cfg[:seach_dom]
       end
       opt = yield(start_dom)           # sets the optimisation algorithm
-      puts "-"*70
-      puts "Optimising the #{f[:name]} function"
-      f[:name] = k.to_s
-      start_t = Time.now
+      
+      puts "Optimising the #{k.to_s} function\nthe starting domain is #{start_dom.inspect}"
+      
+      f[:name]  = k.to_s
+      start_t   = Time.now
+      f[:dim]   = f[:x_abs].count      # is the dimension of the function domain
       opt.loop(has){|x| f[:f].call(x)} # runs the optimisation loop
-      f[:time] = Time.now - start_t    # evaluates the time required to converge
+      f[:time]  = Time.now - start_t   # evaluates the time required to converge
       res = extr_out.call(has)         # extracts the results
       f[:x_cal] = res[0]               # extracts the abscissae of the solution
       f[:f_cal] = res[1]               # extracts the ordinate of the solution
@@ -74,7 +79,7 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     hash[:x_abs].min < @cfg[:seach_dom].min || hash[:x_abs].max > @cfg[:seach_dom].max ? start_search = "far" : start_search = "near"
     hash.key?(:x_loc) ? str_mul = "MULTIPLE MINIMA: #{hash[:x_loc]} #{hash[:f_loc]}" :  str_mul = " ABSOLUTE MINIMUM"
     str = ""
-    [ :name, :class, :n_it, :time, :x_abs, :x_cal, :increment, :f_abs, :f_cal, :residual ].each do |k|
+    [ :name, :dim, :n_it, :time, :x_abs, :x_cal, :increment, :f_abs, :f_cal, :residual ].each do |k|
       str += "#{hash[k]} "
     end
     File.open(@cfg[:res_file], "a") do |file|
@@ -94,7 +99,7 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     raise ArgumentError, "Wrong output chosen for plot" unless x_test
      i = 2 ; str_plot = "" ; str_name = "" ; str_x = "" ; str_y = ""
     @fcns.each_value do |v|
-      str_name += "#{v[:name]} "
+      str_name += "#{v[:name]}(#{v[:dim]}) "
       str_x += "#{v[x].abs} "
       str_y += "#{v[y].to_i} "
       if i <= @fcns.count

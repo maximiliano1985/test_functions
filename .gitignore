@@ -1,5 +1,9 @@
-/results.dat
+one_function.rb
+results.dat
 lib/dataplot_x.dat
 lib/dataplot_y.dat
 lib/population.dat
 lib/cfgplot.dat
+lib/genetic_algorithm.rb
+lib/nmm.rb
+ga_ncr200_npop400.eps

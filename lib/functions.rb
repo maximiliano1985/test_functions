@@ -8,6 +8,10 @@
 As Hillstrom [1] proposed, here the starting points used in the optimizations are chosen from a box surrounding the standard starting point.
 One can evaluate the performances of the agorithm by counting the number of iterations required to converge to the solution.
 For each test function is defined a procedure, its name, its type and its starting points. The functions are defined in alphabetical order.
+
+# References:
+# [1] Hillstrom, K.E. A simulation test approach to the evaluation of nonlinear optimization algorithms. ACM Trans. Math. Softw. 3, 4 (1977), 305-315
+# [2] http://extreme.adorio-research.org/download/mvf/html/node3.html update at 04/06/2011
 =end
 
 INF = 1e6
@@ -17,59 +21,11 @@ module Functions
   
   def load_fcns( n_fcns = "all" ) # list of all the test functions
     @functions = {
-      :rosenbrock => { :f     => @@rosenbrock,
-                       :class => "sne-nls",
-                       :start => [-1.2, 1], # first trial point
-                       :x_abs => [1,1],     # absolute minimum abscissae
-                       :f_abs => 0.0        # absolute minimum ordinate
-      },
-      :freudenstein_and_roth => {
-                       :f     => @@freudenstein_and_roth,
-                       :class => "nls",
-                       :start => [0.5, -2],
-                       :x_abs => [5, 4],
-                       :f_abs => 0.0,
-                       :x_loc => [11.41, -0.8968],
-                       :f_loc => 48.9842
-      },
-      :powell_badly_scaled => {
-                       :f     => @@powell_badly_scaled,
-                       :class => "sne-umi",
-                       :start => [0, 1],
-                       :x_abs => [1.098e-5, 9.106],
-                       :f_abs => 0.0
-      },
-      :brown_badly_scaled => {
-                       :f     => @@brown_badly_scaled,
-                       :class => "umi",
-                       :start => [1, 1],
-                       :x_abs => [1e6, 2e-6],
-                       :f_abs => 0.0
-      },
       :beale => {      :f     => @@beale,
                        :class => "umi",
                        :start => [1,1],
                        :x_abs => [3, 0.5],
                        :f_abs => 0.0
-      },
-      :branin => {      :f     => @@branin,
-                       :class => "umi",
-                       :start => [10,10],
-                       :x_abs => [0.402357, 0.287408],
-                       :f_abs => 0.0
-      },
-      :easom => {      :f     => @@easom,
-                       :class => "umi",
-                       :start => [-60,70],
-                       :x_abs => [PI, PI],
-                       :f_abs => -1.0
-      },
-      :jennrich_and_sampson => {
-                       :f     => @@jennrich_and_sampson,
-                       :class => "nls",
-                       :start => [0.3,0.4],
-                       :x_abs => [0.2578, 0.2578],
-                       :f_abs => 124.362
       },
       :bohachevsky => {:f     => @@bohachevsky,
                        :class => "nls",
@@ -83,18 +39,53 @@ module Functions
                        :x_abs => [1.0, 3.0],
                        :f_abs => 0.0
       },
+      :branin => {      :f     => @@branin,
+                       :class => "umi",
+                       :start => [10,10],
+                       :x_abs => [0.402357, 0.287408],
+                       :f_abs => 2.4554038264861466e-07 # the exact solution is 0.0
+      },
+      :brown_badly_scaled => {
+                       :f     => @@brown_badly_scaled,
+                       :class => "umi",
+                       :start => [1, 1],
+                       :x_abs => [1e6, 2e-6],
+                       :f_abs => 0.0
+      },
       :chichinadze => {:f     => @@chichinadze,
                        :class => "nls",
                        :start => [30.0,-10.0],
                        :x_abs => [5.90133, 0.5],
-                       :f_abs => 43.3159
+                       :f_abs => -43.31586206998933
+      },
+      :easom => {      :f     => @@easom,
+                       :class => "umi",
+                       :start => [-60,70],
+                       :x_abs => [PI, PI],
+                       :f_abs => -1.0
+      },
+      :freudenstein_and_roth => {
+                       :f     => @@freudenstein_and_roth,
+                       :class => "nls",
+                       :start => [0.5, -2],
+                       :x_abs => [5, 4],
+                       :f_abs => 0.0,
+                       :x_loc => [11.41, -0.8968],
+                       :f_loc => 48.98426991859543
       },
       :goldstein_price => {
                        :f     => @@goldstein_price,
                        :class => "nls",
                        :start => [2.0, -2.0],
                        :x_abs => [0.0, -1.0],
-                       :f_abs => 3.0
+                       :f_abs => -3.0
+      },
+      :jennrich_and_sampson => {
+                       :f     => @@jennrich_and_sampson,
+                       :class => "nls",
+                       :start => [0.3,0.4],
+                       :x_abs => [0.2578, 0.2578],
+                       :f_abs => 124.36226865912342
       },
       :himmelblau  => {:f     => @@himmelblau,
                        :class => "nls",
@@ -106,19 +97,50 @@ module Functions
                        :class => "nls",
                        :start => [-6.0, 6.0],
                        :x_abs => [4.0, 2.0],
-                       :f_abs => -2.3458
+                       :f_abs => -2.345811576101292
+      },
+      :powell_badly_scaled => {
+                       :f     => @@powell_badly_scaled,
+                       :class => "sne-umi",
+                       :start => [0, 1],
+                       :x_abs => [1.09815933e-5, 9.106146738],
+                       :f_abs => 4.675406311877606e-21
+      },
+      :rosenbrock => { :f     => @@rosenbrock,
+                       :class => "sne-nls",
+                       :start => [-1.2, 1], # first trial point
+                       :x_abs => [1,1],     # absolute minimum abscissae
+                       :f_abs => 0.0        # absolute minimum ordinate
       },
       :trefethen_4 => {:f     => @@trefethen_4,
                        :class => "nls",
                        :start => [-6.0, 3.5],
                        :x_abs => [-0.0244031, 0.2106124],
-                       :f_abs => -3.30686865
+                       :f_abs => -3.3068686474703033
       },
       :zettl => {      :f     => @@zettl,
                        :class => "nls",
                        :start => [-6.0, 3.5],
                        :x_abs => [-0.02990, 0.0],
-                       :f_abs => -0.003791
+                       :f_abs => -0.0037912371501199
+      },
+      :bard => {       :f     => @@bard,
+                       :class => "nls",
+                       :start => [1.0]*3,
+                       :x_abs => [0.0824106, 1.13304, 2.3437],
+                       :f_abs => 0.008214877468756064
+      },
+      :box_betts => {  :f     => @@box_betts,
+                       :class => "nls",
+                       :start => [-3.0,1.0,3.0],
+                       :x_abs => [1.0, 10.0 ,1.0],
+                       :f_abs => 0.0
+      },
+      :gaussian => {   :f     => @@gaussian,
+                       :class => "umi",
+                       :start => [0.4, 1, 0],
+                       :x_abs => [0.398956, 1.0, 0.0],
+                       :f_abs => 1.12793e-8
       },
       :helical_valley => {
                        :f     => @@helical_valley,
@@ -133,34 +155,6 @@ module Functions
                        :x_abs => [ 50.0, 25.0, 1.5],
                        :f_abs => 0.0
       },
-
-      ####### rivediti le classi delle funzioni
-      :gulf_reseach_development => {
-                       :f     => @@gulf_reseach_development,
-                       :class => "umi",
-                       :start => [5.0, 2.5, 0.15],
-                       :x_abs => [50.0, 25.0, 1.5],
-                       :f_abs => 0.0
-      },
-      :bard => {       :f     => @@bard,
-                       :class => "nls",
-                       :start => [1.0]*3,
-                       :x_abs => [0.08, 1.13, 2.34],
-                       :f_abs => 4.107e-3
-      },
-      :box_betts => {  :f     => @@box_betts,
-                       :class => "nls",
-                       :start => [-3.0,1.0,3.0],
-                       :x_abs => [1.0, 10.0 ,1.0],
-                       :f_abs => 0.0
-      },
-      :powell_singular => {
-                       :f     => @@powell_singular,
-                       :class => "umi",
-                       :start => [3.0, -1.0, 0.0, 1.0],
-                       :x_abs => [0.0]*4,
-                       :f_abs => 0.0
-      },
       :wood => {       :f     => @@wood,
                        :class => "umi",
                        :start => [-3.0, -1.0, -3.0, -1.0],
@@ -171,6 +165,12 @@ module Functions
                        :class => "umi",
                        :start => [-30.0, -10.0, -30.0, -10.0],
                        :x_abs => [0.0]*4,
+                       :f_abs => 4.440892098500626e-16 # the exact solution is 0.0
+      },
+      :coville => {    :f     => @@coville,
+                       :class => "umi",
+                       :start => [-10.0, 10.0, -10.0, -10.0],
+                       :x_abs => [1.0]*4,
                        :f_abs => 0.0
       },
       :kowalik_and_osborne => {
@@ -180,11 +180,11 @@ module Functions
                        :x_abs => [0.192833, 0.190836, 0.123117, 0.135766],
                        :f_abs => 3.0748610e-4
       },
-      :coville => {    :f     => @@coville,
+      :osborne_1 => {  :f     => @@osborne_1,
                        :class => "umi",
-                       :start => [-10.0, 10.0, -10.0, -10.0],
-                       :x_abs => [1.0]*4,
-                       :f_abs => 0.0
+                       :start => [0.5, 1.5, -1, 0.01, 0.02],
+                       :x_abs => [0.3754, 1.9358, -1.4647, 0.01287, 0.02212],
+                       :f_abs => 5.533356734067436e-05 # the exact solution is 5.46489e-5
       },
       :plateau => {    :f     => @@plateau,
                        :class => "umi",
@@ -200,68 +200,70 @@ module Functions
                        :x_loc => [0.0]*6,
                        :f_loc => 5.65565e-3
       },
-      :watson => {     :f     => @@watson,
-                       :class => "umi",
-                       :start => [0.0]*6,
-                       :x_abs => [-0.0158, 1.012, -0.2329, 1.260, -0.513, 0.9928],
-                       :f_abs => 2.28767e-3,
-      },
       :levy => {       :f     => @@levy,
                        :class => "umi",
                        :start => [0.0]*6,
                        :x_abs => [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -4.754402],
-                       :f_abs => -11.504403,
+                       :f_abs => -11.50440302132809
       },
       :rastrigin => {  :f     => @@rastrigin,
                        :class => "umi",
                        :start => [5.0]*6,
                        :x_abs => [0.0]*6,
-                       :f_abs => 0.0,
+                       :f_abs => 0.0
       },
-      :step=> {        :f     => @@step,
+      :watson => {     :f     => @@watson,
                        :class => "umi",
-                       :start => [100.0]*6,
-                       :x_abs => [0.5]*6,
-                       :f_abs => 0.0,
+                       :start => [0.0]*6,
+                       :x_abs => [-0.0158, 1.012, -0.2329, 1.260, -1.513, 0.9928],
+                       :f_abs => 0.002297347610747973 # the exact solution is 2.28767e-3
       },
       :griewank => {     :f     => @@griewank,
                        :class => "umi",
                        :start => [450.0]*10,
                        :x_abs => [0.0]*10,
-                       :f_abs => 0.0,
+                       :f_abs => 0.0
       },
       :neumaier => {   :f     => @@neumaier,
                        :class => "umi",
                        :start => [5.0]*10,
                        :x_abs => [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-                       :f_abs => 0.0,
+                       :f_abs => 0.0
       },
-      :paviani => {   :f     => @@paviani,
+      :osborne_2 => {  :f     => @@osborne_2,
                        :class => "umi",
-                       :start => [5.0]*10,
-                       :x_abs => [9.340266]*10,
-                       :f_abs => -45.7784,
+                       :start => [1.3, 0.65, 0.65, 0.7, 0.6, 3, 5, 7, 2, 4.5, 5.5],
+                       :x_abs => [1.31,0.4315,0.6336,0.5993,0.7539,0.9056,1.3651,4.8248,2.3988,4.5689,5.6754],
+                       :f_abs => 0.040137874050765625
       },
       :maxmod => {     :f     => @@maxmod,
                        :class => "umi",
                        :start => [450.0]*15,
                        :x_abs => [0.0]*15,
-                       :f_abs => 0.0,
+                       :f_abs => 0.0
       },
+=begin
+      :paviani => {   :f     => @@paviani,
+                       :class => "umi",
+                       :start => [5.0]*10,
+                       :x_abs => [9.340266]*10,
+                       :f_abs => -45.775244337147264
+      },
+=end
       :powell => {     :f     => @@powell,
                        :class => "umi",
-                       :start => [-4.5]*16,
-                       :x_abs => [3, -1, 0, 1, 3, -1, 0, 1, 3, -1, 0, 1, 3, -1, 0, 1],
-                       :f_abs => 0.0,
-      },
-      
-=begin        
-      :gaussian => {   :f     => @@gaussian,
+                       :start => [3.0, -1.0, 0.0, 1.0]*4,
+                       :x_abs => [0.0]*16,
+                       :f_abs => 0.0
+      }
+=begin
+      :gulf_reseach_development => {
+                       :f     => @@gulf_reseach_development,
                        :class => "umi",
-                       :start => [0.4, 1, 0],
-                       :x_abs => [0,0,0],############## ambiguities here
-                       :f_abs => 1.12793e-8
-      },   
+                       :start => [5.0, 2.5, 0.15],
+                       :x_abs => [50.0, 25.0, 1.5],
+                       :f_abs => 0.0
+      },
       :meyer => {      :f     => @@meyer,
                        :class => "umi",
                        :start => [0.02, 4000, 250],
@@ -275,19 +277,7 @@ module Functions
                        :x_abs => [0, 0, 0, 0], ############## ambiguities here
                        :f_abs => 85822.2
       },
-      :osborne_1 => {  :f     => @@osborne_1,
-                       :class => "umi",
-                       :start => [0.5, 1.5, -1, 0.01, 0.02],
-                       :x_abs => [0, 0, 0, 0], ############## ambiguities here
-                       :f_abs => 5.46489e-5
-      },
-      :osborne_2 => {  :f     => @@osborne_2,
-                       :class => "umi",
-                       :start => [1.3, 0.65, 0.65, 0.7, 0.6, 3, 5, 7, 2, 4.5, 5.5],
-                       :x_abs => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ############## ambiguities here
-                       :f_abs => 4.01377e-2
-      }, 
-=end      
+=end  
     }
     i = 0
     n_fcns = @functions.count if n_fcns == "all" || n_fcns >= @functions.count
@@ -378,16 +368,16 @@ module Functions
       fcn += (y[j] - ( x[0] + i/(v*x[1] + w*x[2]) ))**2
     end
     fcn
-  end
+  end 
   
   @@gaussian = lambda do |x|
     raise "Dimension error" unless x.size == 3
-    y = [0.0009, 0.0044, 0.0175, 0.0540, 0.1295, 0.24020, 0.3521, 0.3989, 0.3521, 0.2420, 0.1295, 0.0540, 0.0175, 0.0044, 0.0009]
+    y = [0.0009, 0.0044, 0.0175, 0.0540, 0.1295, 0.2420, 0.3521, 0.3989, 0.3521, 0.2420, 0.1295, 0.0540, 0.0175, 0.0044, 0.0009]
     fcn = 0.0
     15.times do |j|
-      i = j + 1
-      t = (8-i)/2
-      fcn += ( x[0]*Math::exp(-x[1]*(t-x[2])**2/2) - y[j] )**2
+      i = j.to_f + 1.0
+      t = (8.0-i)/2.0
+      fcn += (x[0]*Math.exp( (-(x[1]*(t-x[2])**2.0))/2.0 ) - y[j])**2
     end
     fcn
   end
@@ -404,21 +394,17 @@ module Functions
     fcn
   end
   
-  @@gulf_reseach_development = lambda do |x|
+  @@gulf_reseach_development  = lambda do |x|
     raise "Dimension error" unless x.size == 3
     fcn = 0.0
     97.times do |j|
-      i = j + 1 + 3 # i.e. n <= m <= 100 ( with n = 3 )
-      t = i / 100
-      y = 25 + ( -50*Math.log( t ) )**(2/3)
-      fcn += Math::exp( -( (y*100*i*x[1]).abs )**x[2]/x[0] )
+      i = j + 1 + 2 # i.e. n <= m <= 100 ( with n = 3 )
+      t = i.to_f / 100.0
+      m = 3.0
+      y = 25.0 + ( -50.0*Math::log( t ) )**(2.0/3.0)
+      fcn += (Math::exp( -( (y*m*i*x[1]).abs )**x[2]/x[0] ))**2
     end
     fcn
-  end
-  
-  @@powell_singular = lambda do |x|
-    raise "Dimension error" unless x.size == 4
-    x[0]+10*x[1] + 5**0.5*(x[2]-x[3]) + (x[1]-2*x[2])**2 + 10**0.5*(x[0]-x[3])**2
   end
   
   @@wood = lambda do |x|
@@ -429,16 +415,16 @@ module Functions
     f_4 = 1- x[2]
     f_5 = 10**0.5*( x[1] + x[3] -2 )
     f_6 = 10**(-0.5)*( x[1] - x[3] )
-    f_1 + f_2 + f_3 + f_4 + f_5 + f_6
+    f_1**2 + f_2**2 + f_3**2 + f_4**2 + f_5**2 + f_6**2
   end
   
   @@kowalik_and_osborne = lambda do |x|
     raise "Dimension error" unless x.size == 4
-    u = [ 4.0, 2.0, 1.0, 0.5, 0.25, 0.167, 0.125, 0.1, 0.0833, 0.0714, 0.625]
+    u = [ 4.0, 2.0, 1.0, 0.5, 0.25, 0.167, 0.125, 0.1, 0.0833, 0.0714, 0.0625]
     y = [ 0.1957, 0.1947, 0.1735, 0.1600, 0.0844, 0.0627, 0.0456, 0.0342, 0.0323, 0.0235, 0.0246]
     fcn = 0.0
-    11.times do |j|
-      fcn += y[j] - x[0]*( u[j]**2 + u[j]*x[1] )/( u[j]**2 + u[j]*x[2] + x[3] )
+    u.count.times do |j|
+      fcn += ( y[j] - x[0]*( u[j]**2 + u[j]*x[1] )/( u[j]**2 + u[j]*x[2] + x[3] ) )**2
     end
     fcn
   end
@@ -449,7 +435,7 @@ module Functions
     20.times do |j|
       i = j + 1
       t = i/5
-      fcn += ( x[0] + t*x[1] -Math.exp(t) )**2 + ( x[2] + x[3]*Math.sin(t) -Math.cos(t) )**2
+      fcn += (( x[0] + t*x[1] -Math.exp(t) )**2 + ( x[2] + x[3]*Math.sin(t) -Math.cos(t) )**2)**2
     end
     fcn
   end
@@ -461,10 +447,9 @@ module Functions
           0.506, 0.490, 0.478, 0.467, 0.457, 0.448, 0.438, 0.431, 0.424, 0.420,
           0.414, 0.411, 0.406 ]
     fcn = 0.0
-    33.times do |j|
-      i = j + 1
-      t = 10*(i-1)
-      fcn += y[j] - ( x[0] + x[1]*Math.exp(-t*x[3]) + x[2]*Math.exp(-t*x[4]) )
+    y.count.times do |j|
+      t = 10.0*j
+      fcn += (y[j] - ( x[0] + x[1]*Math.exp(-t*x[3]) + x[2]*Math.exp(-t*x[4]) ))**2.0
     end
     fcn
   end
@@ -479,11 +464,10 @@ module Functions
           0.591, 0.559, 0.597, 0.625, 0.739, 0.710, 0.729, 0.720, 0.636, 0.581,
           0.428, 0.292, 0.162, 0.098, 0.054 ]
     fcn = 0.0
-    65.times do |j|
-      i = j + 1
-      t = (i-1)/10
-      fcn += y[j] - ( x[0]*Math.exp(-t*x[4]) +x[1]*Math.exp(-x[5]*(t-x[8])**2) +
-             x[2]*Math.exp(-x[6]*(t-x[9])**2) + x[3]*Math.exp(-x[7]*(t-x[10])**2) )
+    y.count.times do |j|
+      t = j/10.0
+      fcn +=( y[j] - ( x[0]*Math.exp(-t*x[4]) +x[1]*Math.exp(-x[5]*(t-x[8])**2) +
+             x[2]*Math.exp(-x[6]*(t-x[9])**2) + x[3]*Math.exp(-x[7]*(t-x[10])**2) ))**2
     end
     fcn
   end
@@ -494,7 +478,7 @@ module Functions
     13.times do |j|
       i = j + 1
       t = 0.1*i
-      y = Math.exp(-t) - 5*Math.exp(-10*t) + 3*Math.exp(-4*t)
+      y = Math.exp(-t) - 5.0*Math.exp(-10.0*t) + 3.0*Math.exp(-4.0*t)
       fcn += x[2]*Math.exp(-t*x[0]) - x[3]*Math.exp(-t*x[1]) + x[5]*Math.exp(-t*x[4]) - y
     end
     fcn
@@ -504,14 +488,13 @@ module Functions
     raise "Dimension error" unless x.size == 6 # "n" can be: 6, 9, 12. Here is set to 6 
     fcn = 0.0
     29.times do |k|
-      i = k + 1
-      t = i/29 
-      a = 0.0 ; b = 0.0
-      (x.count-2).times{ |j| a += ((j-1)*t**j*x[j+1]) }
-      (x.count-1).times{ |j| b += t**j*x[j+1]}
-      fcn += ( a - b**2 - 1 )**2
+      t = (k + 1.0)/29.0
+      sum1 = 0.0 ; sum2 = 0.0
+      x.count.times{ |j| next if j == 0 ; sum1 += j*x[j]*t**(j-1)}
+      x.count.times{ |j| sum2 += x[j]*t**j}
+      fcn += ( sum1 - sum2**2.0 - 1.0 )**2.0
     end
-    fcn + x[0]**2
+    fcn + x[0]**2.0 + (x[1] - x[0]**2.0 - 1.0)**2.0 
   end
   
   ######### from reference [2]
@@ -531,7 +514,7 @@ module Functions
     a = 0.0 ;  b = 0.0
     n = x.count
     x.each{ |v| a += v**2 ; b += Math.cos(2*PI*v) }
-    - 20*Math.exp(0.2)*(a/n)**0.5 - Math.exp(b/n) +20 + Math.exp(1)
+    - 20*Math.exp(-0.2*(a/n)**0.5) - Math.exp(b/n) + 20 + Math.exp(1)
   end
   
   @@box_betts = lambda do |x|
@@ -572,10 +555,10 @@ module Functions
     raise "Dimension error" unless x.size == 10
     fcn_s = 0.0 ; fcn_p = 0.0
     x.count.times do |i|
-      fcn_s += (x[i]-100)**2 
-      fcn_p *= Math.cos( (x[i]-100)/((i+1)**0.5) )
+      fcn_s += (x[i] - 1.0 )**2
+      fcn_p *= Math.cos( (x[i]-100.0)/((i+1)**0.5) )
     end
-    fcn_s/4000 - fcn_p + 1
+    fcn_s/10 - fcn_p - 1
   end
   
   @@himmelblau = lambda do |x|
@@ -600,7 +583,7 @@ module Functions
   
   @@hosaki = lambda do |x|
     raise "Dimension error" unless x.size == 2
-    ( 1 - 8*x[0] +7*x[0]**2 - 7/3*x[0]**3 + 1/4*x[0]**4)*x[1]**2*Math.exp(-x[1])
+    ( 1.0 - 8.0*x[0] +7.0*x[0]**2.0 - 7.0/3.0*x[0]**3.0 + 1.0/4.0*x[0]**4.0)*x[1]**2.0*Math.exp(-x[1])
   end
   
   @@levy = lambda do |x|
@@ -629,23 +612,18 @@ module Functions
     fcn  
   end
   
-  @@paviani = lambda do |x|
+  @@paviani  = lambda do |x|
     raise "Dimension error" unless x.count == 10
-    fcn_s = 0.0 ; fcn_p = 0.0
-    x.count.times do |i|
-      x_i  = x[i]
-      case
-      when x_i <= 2.0001
-        x_i = 2.0001
-      when x_i >= 9.9999
-        x_i = 9.9999
-      end
-      fcn_s += (Math.log(x_i-2.0))**2 + (Math.log(10 - x_i))**2
-      fcn_p *= x[i]
+    fcn_s = 0.0 ; fcn_p = 1.0
+    x.each do |v|
+      x_i = [ v, 2.0001].max
+      x_i = [ x_i, 9.9999].min
+      fcn_s += ( Math.log(x_i - 2.0) )**2.0 + ( Math.log( 10.0 - x_i ) )**2.0
+      fcn_p *= v
     end
     fcn_s - fcn_p**0.2
   end
-
+  
   @@plateau = lambda do |x|
     raise "Dimension error" unless x.count == 5
     fcn = 0.0
@@ -657,23 +635,16 @@ module Functions
     raise "Dimension error" unless x.count == 16
     fcn = 0.0
     (x.count/4).times do |i|
-      j = i + 1
-      fcn += (x[4*j-4] + 10*x[4*j-3])**2 + 5*(x[4*j-2] - x[4*j-1])**2 + (x[4*j-3] - 2*x[4*j-2])**4 + 10*(x[4*j-4] - x[4*j-1])**4
+      j = i + 1.0
+      fcn += (x[4*j-4] + 10.0*x[4*j-3])**2.0 + 5.0*(x[4*j-2] - x[4*j-1])**2.0 + (x[4*j-3] - 2.0*x[4*j-2])**4.0 + 10.0*(x[4*j-4] - x[4*j-1])**4.0
     end
     fcn
   end
   
-  @@rastrigin =lambda do |x|
+  @@rastrigin = lambda do |x|
     raise "Dimension error" unless x.count == 6
     fcn = 0.0
     x.count.times{ |i| fcn += x[i]**2 - 10*Math.cos(2*PI*x[i]) + 10 }
-    fcn
-  end
-  
-  @@step =lambda do |x|
-    raise "Dimension error" unless x.count == 6
-    fcn = 0.0
-    x.count.times{ |i| fcn += (x[i] + 0.5)**2 }
     fcn
   end
 
@@ -688,11 +659,3 @@ module Functions
   end
   
 end # module Functions
-
-
-
-
-
-# References:
-# [1] Hillstrom, K.E. A simulation test approach to the evaluation of nonlinear optimization algorithms. ACM Trans. Math. Softw. 3, 4 (1977), 305-315
-# [2] http://extreme.adorio-research.org/download/mvf/html/node3.html update at 04/06/2011
