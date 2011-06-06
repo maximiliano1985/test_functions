@@ -1,9 +1,13 @@
 one_function.rb
 results.dat
+ga_ncr200_npop400.eps
 lib/dataplot_x.dat
 lib/dataplot_y.dat
 lib/population.dat
+lib/simplex_g.dat
+lib/simplex_h.dat
+lib/simplex_l.dat
+lib/simplex_norm.dat
 lib/cfgplot.dat
 lib/genetic_algorithm.rb
 lib/nmm.rb
-ga_ncr200_npop400.eps
