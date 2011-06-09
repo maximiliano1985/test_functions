@@ -6,15 +6,16 @@
 #
 require './lib/tester'
 
-NPOP = 400
-NCR = 200
+NPOP = 200
+NCR = 150
 
 tester = Tester.new :n_fcns => "all", :res_file => "results.dat"
 # procedure used to extract the solution from the array of iterations
 extract_out = lambda do |a|
-  out_hash = a[(a.count-1).to_s.to_sym].first
-  [out_hash[:chromosome], out_hash[:fitness], a.count*NPOP]
-    # \__ X vector (solution)     \__ f(X) value    \__ number of iterations
+  out = a[0]
+  #out_hash = a[(a.count-1).to_s.to_sym].first
+  [out[:chromosome], out[:fitness], a.count*NPOP]
+  # \__ X vector (solution)  \__ f(X) value  \__ number of iterations
 end
 
 # block used to adapt the function domain dinamically

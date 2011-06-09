@@ -43,21 +43,20 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     puts "_"*60
     
     @fcns.each do |k,f|
-      has = {} ; start_dom = {}
+      start_dom = {}
       dim = f[:x_abs].count            # domain dimension of f
       dim.times do |i|
         start_dom[i.to_s.to_sym] = @cfg[:seach_dom]
       end
       opt = yield(start_dom)           # sets the optimisation algorithm
-      
-      puts "Optimising the #{k.to_s} function\nthe starting domain is #{start_dom.inspect}"
+      puts "Optimising the #{k.to_s.upcase} function\nthe starting domain is #{start_dom.inspect}"
       
       f[:name]  = k.to_s
       start_t   = Time.now
       f[:dim]   = f[:x_abs].count      # is the dimension of the function domain
-      opt.loop(has){|x| f[:f].call(x)} # runs the optimisation loop
+      opt.loop(h={}){|x| f[:f].call(x)}# runs the optimisation loop
       f[:time]  = Time.now - start_t   # evaluates the time required to converge
-      res = extr_out.call(has)         # extracts the results
+      res = extr_out.call(opt.sorted)  # extracts the results
       f[:x_cal] = res[0]               # extracts the abscissae of the solution
       f[:f_cal] = res[1]               # extracts the ordinate of the solution
       f[:n_it]  = res[2]               # extracts the number of iterations made
@@ -131,7 +130,7 @@ set datafile missing '-'
 set style data histograms
 set xtics border in scale 1,0.5 nomirror rotate by -45  offset character 0, 0, 0
 set ytics border in scale 0,0 mirror norotate  offset character 0, 0, 0 autofreq
-set title \"#{@cfg[:plotopt][:title]}\"
+set title \"#{@cfg[:plotopt][:title]} (dimension)\"
 set xlabel \"#{@cfg[:plotopt][:xlabel]}\"
 set multiplot
 set origin 0.0, 0.45

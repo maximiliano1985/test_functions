@@ -1,6 +1,10 @@
 one_function.rb
 results.dat
 ga_ncr200_npop400.eps
+simplex_g.dat
+simplex_h.dat
+simplex_l.dat
+simplex_norm.dat
 lib/dataplot_x.dat
 lib/dataplot_y.dat
 lib/population.dat
