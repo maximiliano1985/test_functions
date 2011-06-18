@@ -1,6 +1,6 @@
 one_function.rb
 results.dat
-ga_ncr200_npop400.eps
+media
 simplex_g.dat
 simplex_h.dat
 simplex_l.dat
@@ -13,5 +13,6 @@ lib/simplex_h.dat
 lib/simplex_l.dat
 lib/simplex_norm.dat
 lib/cfgplot.dat
-lib/genetic_algorithm.rb
-lib/nmm.rb
+algorithms
+ga_outputs.txt
+nm_outputs.txt

@@ -5,15 +5,19 @@
 #  Copyright (c) 2011 University of Trento. All rights reserved.
 #
 require './lib/tester'
+require "./algorithms/optimizer_GA_NMM"
+
+NIT = 16000
 
 tester = Tester.new(
   :n_fcns   => "all",
-  :res_file => "results_nmm.dat"#,
+  :res_file => "results_ga_nmm.dat"#,
   #:plotopt  => {:title => "Modified Nelder Mead test: tollerance = 0.01, expansion factor = 2, contraction factor = 0.5"} 
 )
 
 # procedure used to extract the solution from the array of iterations
 extract_out = lambda do |a|
+
   out = a.sorted.first
   [ out[1][0], out[1][1], a.iteration]
 # X vector_/   \__ f(X) value   \__ number of iterations
@@ -27,22 +31,24 @@ tester.test( extract_out ) do |domain|
   # define the starting simplex: is the analysed function is : IR^n --> IR, the starting simplex
   # must have "n+1" vertices, each with "n" coordinates
   @dim = domain.count + 1 # the dimension of the simplex
-  opt = NMM::Optimizer.new(
-    :dim   => @dim,
-    :tol   => 1e-5,
-    :niter => 2000,
-    :exp_f => 2,
-    :cnt_f => 0.5,
-    :pconv => false
+  # Instantiate the optimizer, with tolerance and dimension
+  opt = OP::Optimizer.new(
+    :tol => 1e-2,
+    # a) genetic algorithm optimizer configurations
+    :ga_i_o         => domain,
+    :ga_npop        => 10, 
+    :ga_ncr         => 100,
+    :ga_p_mutation  => 0.2,
+    :ga_p_crossover => 0.8,
+    :ga_tol         => 1e-4,
+    :ga_pconv       => false,
+    
+    # b) nelder mead optimizer configurations
+    :nm_niter       => 2000, 
+    :nm_exp_f       => 2.0,
+    :nm_cnt_f       => 0.5,
+    :nm_tol         => 1e-5,
+    :nm_pconv       => false
   )
-  
-  start_p = []
-  @dim.times do |i|
-    vec_ary = [domain[:"0"][0].to_f]*(@dim-1)
-    vec_ary[i-1] = domain[:"0"][1].to_f unless i == 0
-    p vec_ary
-    start_p << Vector.elements( vec_ary, copy = true )
-  end
-  opt.start_points = start_p
   opt # returns the whole object "opt" 
 end

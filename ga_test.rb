@@ -7,14 +7,14 @@
 require './lib/tester'
 
 NPOP = 200
-NCR = 150
+NCR = 100
 
-tester = Tester.new :n_fcns => "all", :res_file => "results.dat"
+tester = Tester.new :n_fcns => "all", :res_file => "results_ga.dat"
 # procedure used to extract the solution from the array of iterations
 extract_out = lambda do |a|
-  out = a[0]
+  out = a.sorted[0]
   #out_hash = a[(a.count-1).to_s.to_sym].first
-  [out[:chromosome], out[:fitness], a.count*NPOP]
+  [out[:chromosome], out[:fitness], a.iteration]
   # \__ X vector (solution)  \__ f(X) value  \__ number of iterations
 end
 
@@ -24,7 +24,7 @@ end
 tester.test( extract_out ) do |domain|
   raise "Hash needed" unless domain.class == Hash
   opt = GA::Optimizer.new(
-  :tol => 1,
+  :tol         => 1e-3,
   :p_mutation  => 0.2,
   :p_crossover => 0.8,
   :npop        => NPOP,

@@ -7,8 +7,8 @@
 
 require 'rubygems'
 require 'gnuplotr'
-require './lib/genetic_algorithm'
-require './lib/nmm'
+require './algorithms/genetic_algorithm'
+require './algorithms/nmm'
 require './lib/functions'
 
 class Tester
@@ -19,10 +19,10 @@ class Tester
       :seach_dom => [-10,10], #domain of values associated to the first trial solution
       :res_file  => "results.dat",
       :plot      => true,
-      :plotopt   => {:yrange => [ 0 , 10 ]
+      :plotopt   => {:yrange => [ 0 , 10 ],
+                     :title  => "Optimiser performance plot (dimension)"
       }
     }
-    @cfg[:plotopt][:title] = "Optimiser performance plot"
     @cfg.merge! args
     # based on the number of functions chosen to the test, load the function library
     @fcns = load_fcns(@cfg[:n_fcns]) # it is an array with the name of all functions that will be tested
@@ -56,7 +56,7 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
       f[:dim]   = f[:x_abs].count      # is the dimension of the function domain
       opt.loop(h={}){|x| f[:f].call(x)}# runs the optimisation loop
       f[:time]  = Time.now - start_t   # evaluates the time required to converge
-      res = extr_out.call(opt.sorted)  # extracts the results
+      res = extr_out.call(opt)  # extracts the results
       f[:x_cal] = res[0]               # extracts the abscissae of the solution
       f[:f_cal] = res[1]               # extracts the ordinate of the solution
       f[:n_it]  = res[2]               # extracts the number of iterations made
@@ -130,7 +130,7 @@ set datafile missing '-'
 set style data histograms
 set xtics border in scale 1,0.5 nomirror rotate by -45  offset character 0, 0, 0
 set ytics border in scale 0,0 mirror norotate  offset character 0, 0, 0 autofreq
-set title \"#{@cfg[:plotopt][:title]} (dimension)\"
+set title \"#{@cfg[:plotopt][:title]}\"
 set xlabel \"#{@cfg[:plotopt][:xlabel]}\"
 set multiplot
 set origin 0.0, 0.45
