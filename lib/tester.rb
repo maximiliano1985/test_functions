@@ -7,9 +7,9 @@
 
 require 'rubygems'
 require 'gnuplotr'
-require './algorithms/genetic_algorithm'
-require './algorithms/nmm'
-require './lib/functions'
+#require '../algorithms/genetic_algorithm'
+#require '../algorithms/nmm'
+require '../lib/functions'
 
 class Tester
   include Functions
@@ -28,7 +28,9 @@ class Tester
     @fcns = load_fcns(@cfg[:n_fcns]) # it is an array with the name of all functions that will be tested
     File.open(@cfg[:res_file], 'w'){ |file| file.puts "Number of tested functions #{@cfg[:n_fcns]}, starting domain: #{@cfg[:seach_dom]}
 Class of test functions:\nnls = nonlinear last squares\numi = unconstrained minimisation\nsne = systems of nonlinear equations\n
-#{@fcns.count} functions are tested:\nn name dimension iterations time_[s] x_exact x_calculated increment f_exact f_calculated residual start_search multiple_minima" }
+#{@fcns.count} functions are tested:\nn\tname\tdimension\titerations\ttime_[s]\tx_exact\tx_calculated\tincrement\tf_exact\tf_calculated\tresidual\tstart_search\tmultiple_minima" }
+  
+  @non_eval_fcns = []
   end
   
   def test(extr_out)
@@ -45,27 +47,34 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     @fcns.each do |k,f|
       start_dom = {}
       dim = f[:x_abs].count            # domain dimension of f
+      
       dim.times do |i|
         start_dom[i.to_s.to_sym] = @cfg[:seach_dom]
       end
+      
       opt = yield(start_dom)           # sets the optimisation algorithm
       puts "Optimising the #{k.to_s.upcase} function\nthe starting domain is #{start_dom.inspect}"
       
       f[:name]  = k.to_s
       start_t   = Time.now
       f[:dim]   = f[:x_abs].count      # is the dimension of the function domain
-      opt.loop(h={}){|x| f[:f].call(x)}# runs the optimisation loop
-      f[:time]  = Time.now - start_t   # evaluates the time required to converge
-      res = extr_out.call(opt)  # extracts the results
-      f[:x_cal] = res[0]               # extracts the abscissae of the solution
-      f[:f_cal] = res[1]               # extracts the ordinate of the solution
-      f[:n_it]  = res[2]               # extracts the number of iterations made
-      residual(f)                      # evaluates the residual error
-      res_err_perc(f)                  # evaluates the percentual error on residual
-      increment(f)                     # evaluates the increment error
-      inc_err_perc(f)                  # evaluates the percentual error on increment
-      log(f, n)
-      n += 1
+      begin
+        opt.loop(h={}){|x| f[:f].call(x)}# runs the optimisation loop
+        f[:time]  = Time.now - start_t   # evaluates the time required to converge
+        res = extr_out.call(opt)         # extracts the results
+        f[:x_cal] = res[0]               # extracts the abscissae of the solution
+        f[:f_cal] = res[1]               # extracts the ordinate of the solution
+        f[:n_it]  = res[2]               # extracts the number of iterations made
+        residual(f)                      # evaluates the residual error
+        res_err_perc(f)                  # evaluates the percentual error on residual
+        increment(f)                     # evaluates the increment error
+        inc_err_perc(f)                  # evaluates the percentual error on increment
+        log(f, n)
+        n += 1
+      rescue
+        @non_eval_fcns << k
+        puts "#{k} function no evaluated in the given starting domain"
+      end
     end # fcns.each
     #log( @fcns )
     plot
@@ -79,44 +88,46 @@ Class of test functions:\nnls = nonlinear last squares\numi = unconstrained mini
     hash.key?(:x_loc) ? str_mul = "MULTIPLE MINIMA: #{hash[:x_loc]} #{hash[:f_loc]}" :  str_mul = " ABSOLUTE MINIMUM"
     str = ""
     [ :name, :dim, :n_it, :time, :x_abs, :x_cal, :increment, :f_abs, :f_cal, :residual ].each do |k|
-      str += "#{hash[k]} "
+      str += "#{hash[k]}\t"
     end
     File.open(@cfg[:res_file], "a") do |file|
-      file.print "#{n} " + str + "#{start_search} #{str_mul} \n"
+      file.print "#{n}\t" + str + "#{start_search}\t#{str_mul}\n"
     end
   end
 
   def plot
-    x = :residual # <--------------- set this for the plot
+    x = :residual # <-- set this for the plot
     y = :n_it 
     x_test = true
     n_it = []
-    @fcns.each_value do|v|
+    @fcns.each do |k,v|
+      next if @non_eval_fcns.include? k
       x_test = false unless v.key? x
       n_it << v[y]
     end
     raise ArgumentError, "Wrong output chosen for plot" unless x_test
      i = 2 ; str_plot = "" ; str_name = "" ; str_x = "" ; str_y = ""
-    @fcns.each_value do |v|
-      str_name += "#{v[:name]}(#{v[:dim]}) "
-      str_x += "#{v[x].abs} "
-      str_y += "#{v[y].to_i} "
+    @fcns.each do |k,v|
+      next if @non_eval_fcns.include? k
+      str_name += "#{v[:name]}(#{v[:dim]})\t"
+      str_x += "#{v[x].abs}\t"
+      str_y += "#{v[y].to_i}\t"
       if i <= @fcns.count
         str_plot += " , '' using #{i} ti col"
         i += 1
       end
     end
 
-    File.open("./lib/dataplot_x.dat","w") do |file|
+    File.open("dataplot_x.dat","w") do |file|
       file.print str_name + "\n"
       file.print str_x
     end
-    File.open("./lib/dataplot_y.dat","w") do |file|
+    File.open("dataplot_y.dat","w") do |file|
       file.print str_name + "\n"
       file.print str_y
     end
     
-    File.open("./lib/cfgplot.dat", "w") do |file|
+    File.open("cfgplot.dat", "w") do |file|
       file.print "reset
 set terminal aqua size 1200,900
 set tmargin 10
@@ -137,16 +148,17 @@ set origin 0.0, 0.45
 set size 1.0,0.7
 set ylabel \"#{x.to_s}\"
 set yrange [#{@cfg[:plotopt][:yrange][0]} : #{@cfg[:plotopt][:yrange][1]}]
-plot './lib/dataplot_x.dat' using 1 ti col" + str_plot +"
+plot 'dataplot_x.dat' using 1 ti col" + str_plot +"
 set origin 0.0, -0.05
 set size 1.0,0.7
 set ylabel \"Iterations\"
 set yrange [0 : #{n_it.max+50}]
-plot './lib/dataplot_y.dat' using 1 ti col" + str_plot +"
+plot 'dataplot_y.dat' using 1 ti col" + str_plot +"
 \nexit"
     end
-    system "gnuplot < ./lib/cfgplot.dat"
-
+    system "gnuplot < cfgplot.dat"
+    sleep 0.1
+    system "rm dataplot_x.dat dataplot_y.dat cfgplot.dat"
   end #plot
 end # class
 

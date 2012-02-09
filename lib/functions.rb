@@ -298,15 +298,15 @@ module Functions
   end
   
   def increment(fcns={})
-    fcns[:increment] = fcns[:x_cal]
+    fcns[:increment] = fcns[:x_abs]
     fcns[:x_abs].each_index do |i|
-      fcns[:increment][i] = fcns[:x_cal][i] - fcns[:x_abs][i]
+    fcns[:increment][i] = fcns[:x_cal][i] - fcns[:x_abs][i]
     end
     return fcns
   end
   
   def inc_err_perc(fcns={})
-    fcns[:inc_err_perc] = fcns[:x_cal]
+    fcns[:inc_err_perc] = fcns[:x_abs]
     fcns[:x_abs].each_index do |i|
       fcns[:inc_err_perc][i] = (100*(fcns[:x_cal][i] - fcns[:x_abs][i])/fcns[:x_abs][i]).abs
     end
